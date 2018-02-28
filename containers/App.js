@@ -67,44 +67,56 @@ export default class App extends Component {
             }
         };
 
+        // Bind the scope to the methods
         this.rangeUpdate = this.rangeUpdate.bind(this);
+        this.normalizeJson = this.normalizeJson.bind(this);
     }
     
     componentDidMount() {
+        // Get the intiale JSON
         fetch(`https://wt-0f5f4c2bc1fad8dd9864b1fa2568a69d-0.run.webtask.io/r4-ui-challenge`).then(res => {
             
+            // Tell fetch it's a JSON request
             res.json().then(resJSON => {
-                let min, max = 0;
-                let companies = [];
-
-                resJSON.company.forEach(function(company){
-                    companies.push({name: company.name, products: []});
-                    company.records.forEach(function(record){
-                        record.products.records.forEach(function(product){
-                            if(companies.length){
-                                companies[companies.length - 1].products.push(product);
-                            }
-
-                            if(min && min > product.sales){
-                                min = product.sales
-                            } else {
-                                min = product.sales;
-                            }
-
-                            if(max < product.sales){
-                                max = product.sales;
-                            }
-                        });
-                    });
-                });
-
-                console.log(companies);
-
-                this.setState({companies: companies, range: {active: true, min: min, max: max, selectedRange: max} });
-                
+                // Process the data
+                this.normalizeJson(resJSON);
             });
 
         });
+    }
+
+    normalizeJson(jsonReq) {
+        /* Because I know what the json I'm expecting is, I can break out
+           this coding into it's own function. This way I can update the
+           state again if I need to update the json */
+           
+        let min, max = 0;
+        let companies = [];
+
+        jsonReq.company.forEach(function(company){
+            companies.push({name: company.name, products: []});
+            company.records.forEach(function(record){
+                record.products.records.forEach(function(product){
+                    if(companies.length){
+                        companies[companies.length - 1].products.push(product);
+                    }
+
+                    if(min && min > product.sales){
+                        min = product.sales
+                    } else {
+                        min = product.sales;
+                    }
+
+                    if(max < product.sales){
+                        max = product.sales;
+                    }
+                });
+            });
+        });
+
+        console.log(companies);
+
+        this.setState({companies: companies, range: {active: true, min: min, max: max, selectedRange: max} });
     }
 
     rangeUpdate(e) {
