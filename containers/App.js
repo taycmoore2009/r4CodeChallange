@@ -6,26 +6,29 @@ function Row(props) {
         return props.companies.map(function(company, index){
             return (
                 <li className="company" key={ index }>
-                    <h3>{ company.name }</h3>
+                    <input type="checkbox" id={ "company" + index } class="inputController" />
+                    <label for={ "company" + index } ><h3>{ company.name }</h3></label>
                     <Product products={ company.products } range={ props.range } />
                 </li>
             )
         });
     } else {
-        return <div class="loading spinner">Loading</div>
+        return (
+            <div className="spinner">
+                <div className="rect rect1"></div>
+                <div className="rect rect2"></div>
+                <div className="rect rect3"></div>
+                <div className="rect rect4"></div>
+                <div className="rect rect5"></div>
+            </div>
+        );
     }
 };
 
 function Product(props) {
     const products = props.products.map(function(productRecord, index){
-
-        var randomColor =  Math.floor(Math.random()*256) +", "+  Math.floor(Math.random()*256) +", "+  Math.floor(Math.random()*256);
-        var styles = {
-            backgroundColor: "rgb("+ randomColor +")",
-            outline: "1px solid rgba("+ randomColor +", .5)"
-        };
         let product = (
-            <li className="product" key={ index } style={ styles }>
+            <li className="product" key={ index } >
                 <div className="productName">
                     <a href={ productRecord.url }>
                         { productRecord.name }
@@ -46,7 +49,7 @@ function Product(props) {
     });
 
     return (
-        <ul className="products">
+        <ul className="products inputControlled">
             { products }
         </ul>
     )
